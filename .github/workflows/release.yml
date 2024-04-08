@@ -41,6 +41,6 @@ jobs:
         mv app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk dist/app-uiautomator-test.apk
     
     - name: Publish APKs
-      run: gh release upload ${{github.event.release.tag_name}} dist/*
+      run: gh release upload ${{  github.ref_name }} dist/*
       env:
-        GH_TOKEN: ${{ secrets.GORELEASER_GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
