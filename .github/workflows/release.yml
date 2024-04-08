@@ -42,3 +42,5 @@ jobs:
     
     - name: Publish APKs
       run: gh release upload ${{github.event.release.tag_name}} dist/*
+      env:
+        GH_TOKEN: ${{ secrets.GORELEASER_GITHUB_TOKEN }}
