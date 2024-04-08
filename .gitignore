@@ -4,7 +4,8 @@ local.properties
 build
 captures
 .idea
-gradle.properties
 app/app.iml
 android-uiautomator-server.iml
 *.iml
+.settings/
+.project

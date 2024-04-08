@@ -1,5 +1,5 @@
 # Purpose
-[![Build Status](https://travis-ci.org/openatx/android-uiautomator-server.svg?branch=master)](https://travis-ci.org/openatx/android-uiautomator-server)
+[![Android CI](https://github.com/openatx/android-uiautomator-server/actions/workflows/android.yml/badge.svg)](https://github.com/openatx/android-uiautomator-server/actions/workflows/android.yml)
 
 [UIAutomator](http://developer.android.com/tools/testing/testing_ui.html) is a
 great tool to perform Android UI testing, but to do it, you have to write java
@@ -171,3 +171,4 @@ Clipboard, Thanks to @fplust
 - https://github.com/willerce/WhatsInput
 - https://github.com/senzhk/ADBKeyBoard
 - https://github.com/amotzte/android-mock-location-for-development
+- https://github.com/gladed/gradle-android-git-version
