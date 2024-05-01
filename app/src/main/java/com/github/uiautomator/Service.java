@@ -78,14 +78,15 @@ public class Service extends android.app.Service {
                 .setTicker(getString(R.string.monitor_service_ticker))
                 .setContentTitle(getString(R.string.monitor_service_title))
                 .setContentText(getString(R.string.monitor_service_text))
-                .setContentIntent(PendingIntent.getActivity(this, NOTIFICATION_ID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+                .setContentIntent(PendingIntent.getActivity(this, NOTIFICATION_ID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE))
                 .setWhen(System.currentTimeMillis());
         Notification notification = builder.build();
         startForeground(NOTIFICATION_ID, notification);
 
+        // since atx-agent is remove since uiautomator2 3.x, so the following code is useless
         HttpPostNotifier notifier = new HttpPostNotifier("http://127.0.0.1:7912");
         Context context = getApplicationContext();
-        addMonitor(new BatteryMonitor(context, notifier));
+//        addMonitor(new BatteryMonitor(context, notifier));
         addMonitor(new WifiMonitor(this, notifier));
     }
 
@@ -117,7 +118,6 @@ public class Service extends android.app.Service {
         } else if (ACTION_STOP.equals(action)) {
             stopSelf();
         }
-
         return START_NOT_STICKY; // not start again, when killed by system
     }
 
