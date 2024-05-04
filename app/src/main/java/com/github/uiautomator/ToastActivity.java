@@ -29,17 +29,16 @@ public class ToastActivity extends Activity {
         String showFloat = intent.getStringExtra("showFloatWindow");
         Log.i(TAG, "showFloat: " + showFloat);
 
-        boolean floatEnabled = FloatWindowManager.getInstance().checkFloatPermission(ToastActivity.this);
+        boolean floatEnabled = FloatWindowManager.getInstance().checkPermission(ToastActivity.this);
         if (!floatEnabled) {
             Log.w(TAG, "floatPermission is not enabled");
-            return;
+        } else {
+            if ("true".equals(showFloat)) {
+                getFloatView().show();
+            } else if ("false".equals(showFloat)) {
+                getFloatView().hide();
+            }
         }
-        if ("true".equals(showFloat)) {
-            getFloatView().show();
-        } else if ("false".equals(showFloat)) {
-            getFloatView().hide();
-        }
-
         moveTaskToBack(true);
     }
 
