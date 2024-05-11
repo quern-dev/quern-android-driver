@@ -23,6 +23,7 @@
 
 package com.github.uiautomator.stub;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Instrumentation;
 import android.app.UiAutomation;
 import android.content.ClipData;
@@ -54,6 +55,7 @@ import android.view.MotionEvent;
 
 
 import com.github.uiautomator.ToastHelper;
+import com.github.uiautomator.exceptions.NotImplementedException;
 import com.github.uiautomator.stub.watcher.ClickUiObjectWatcher;
 import com.github.uiautomator.stub.watcher.PressKeysWatcher;
 
@@ -89,8 +91,12 @@ public class AutomatorServiceImpl implements AutomatorService {
 
         // https://developer.android.com/reference/androidx/core/accessibilityservice/AccessibilityServiceInfoCompat#FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY()
         // https://www.jianshu.com/p/a8ccd607e172
-        // improve accessibility support for "android.webkit.WebView"
-        uiAutomation.getServiceInfo().flags |= AccessibilityServiceInfoCompat.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY;
+        // https://developer.android.com/reference/android/app/UiAutomation
+
+        AccessibilityServiceInfo info = uiAutomation.getServiceInfo();
+        // improve accessibility support for "android.webkit.WebView" q
+        info.flags |= AccessibilityServiceInfoCompat.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY;
+        uiAutomation.setServiceInfo(info);
 
         device = UiDevice.getInstance(mInstrumentation);
         touchController = new TouchController(mInstrumentation);
@@ -117,7 +123,7 @@ public class AutomatorServiceImpl implements AutomatorService {
         configurator.setScrollAcknowledgmentTimeout(200); // Default 200
         configurator.setKeyInjectionDelay(0); // Default 0
 
-        uiAutomation.setOnAccessibilityEventListener(new AccessibilityEventListener(device, watchers));
+        //uiAutomation.setOnAccessibilityEventListener(new AccessibilityEventListener(device, watchers));
     }
 
     private UiAutomation getUiAutomation() {
@@ -303,13 +309,8 @@ public class AutomatorServiceImpl implements AutomatorService {
         device.setCompressedLayoutHierarchy(compressed);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            // Original code: device.dumpWindowHierarchy(os);
-            // The old code have xml encode error
-            // It seems the new androidx.uiautomator dump looks fine.
+            uiAutomation.clearCache();
             device.dumpWindowHierarchy(os);
-            // alternative
-            // sometimes java.lang.NullPointerException raises
-            //  AccessibilityNodeInfoDumper.dumpWindowHierarchy(device, os);
             return os.toString("UTF-8");
         } catch (IOException e) {
             Log.d("dumpWindowHierarchy got IOException: " + e);

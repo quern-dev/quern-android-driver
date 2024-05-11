@@ -114,6 +114,8 @@ dependencies {
     androidTestImplementation 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
 
     implementation project(':permission')
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'junit:junit:4.12'
 }
 
 

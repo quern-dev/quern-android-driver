@@ -26,9 +26,9 @@ package com.github.uiautomator.stub;
 import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
-import androidx.test.InstrumentationRegistry;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.SdkSuppress;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
@@ -91,7 +91,7 @@ public class Stub {
     private void launchPackage(String packageName) {
         Log.i("Launch " + packageName);
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        Context context = InstrumentationRegistry.getContext();
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
         final Intent intent = context.getPackageManager()
                 .getLaunchIntentForPackage(packageName);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -103,7 +103,7 @@ public class Stub {
 
     private void launchService() throws RemoteException {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        Context context = InstrumentationRegistry.getContext();
+
         device.wakeUp();
 
         // Wait for launcher
@@ -115,7 +115,8 @@ public class Stub {
         }
 
         Log.d("Launch service");
-        startMonitorService(context);
+        // Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        //startMonitorService(context);
     }
 
     private void startMonitorService(Context context) {
@@ -127,8 +128,8 @@ public class Stub {
     @After
     public void tearDown() {
         server.stop();
-        Context context = InstrumentationRegistry.getContext();
-        stopMonitorService(context);
+        //Context context = InstrumentationRegistry.getContext();
+        //stopMonitorService(context);
     }
 
     private void stopMonitorService(Context context) {
