@@ -309,7 +309,11 @@ public class AutomatorServiceImpl implements AutomatorService {
         device.setCompressedLayoutHierarchy(compressed);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            uiAutomation.clearCache();
+            try {
+                uiAutomation.clearCache();
+            } catch (NoSuchMethodError e) {
+                // ignore
+            }
             device.dumpWindowHierarchy(os);
             return os.toString("UTF-8");
         } catch (IOException e) {

@@ -23,9 +23,12 @@
 
 package com.github.uiautomator.stub;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
+import android.view.accessibility.AccessibilityNodeInfo;
+
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -68,7 +71,7 @@ public class Stub {
 
     @Before
     public void setUp() throws Exception {
-        launchService();
+        //launchService();
         JsonRpcServer jrs = new JsonRpcServer(new ObjectMapper(), new AutomatorServiceImpl(), AutomatorService.class);
         jrs.setShouldLogInvocationErrors(true);
         jrs.setErrorResolver(new ErrorResolver() {
@@ -103,7 +106,6 @@ public class Stub {
 
     private void launchService() throws RemoteException {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-
         device.wakeUp();
 
         // Wait for launcher
@@ -142,8 +144,20 @@ public class Stub {
     @LargeTest
     public void testUIAutomatorStub() throws InterruptedException {
         Log.i("server started");
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        int nullCount = 0;
         while (server.isAlive()) {
-            Thread.sleep(100);
+            AccessibilityNodeInfo nodeInfo = instrumentation.getUiAutomation().getRootInActiveWindow();
+            if (nodeInfo == null) {
+                nullCount += 1;
+            } else {
+                nullCount = 0;
+            }
+            if (nullCount >= 3) {
+                Log.e("uiAutomation.getRootInActiveWindow() always return null, okhttpd server quit");
+                return;
+            }
+            Thread.sleep(500);
         }
     }
 }
