@@ -61,7 +61,6 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 19)
 public class Stub {
-    private final String TAG = "UIAUTOMATOR";
     private static final int LAUNCH_TIMEOUT = 5000;
     // http://www.jsonrpc.org/specification#error_object
     private static final int CUSTOM_ERROR_CODE = -32001;
@@ -71,7 +70,9 @@ public class Stub {
 
     @Before
     public void setUp() throws Exception {
-        //launchService();
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.wakeUp();
+
         JsonRpcServer jrs = new JsonRpcServer(new ObjectMapper(), new AutomatorServiceImpl(), AutomatorService.class);
         jrs.setShouldLogInvocationErrors(true);
         jrs.setErrorResolver(new ErrorResolver() {
@@ -104,7 +105,7 @@ public class Stub {
         device.pressHome();
     }
 
-    private void launchService() throws RemoteException {
+    private void launchTestApp() throws RemoteException {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.wakeUp();
 
@@ -117,8 +118,6 @@ public class Stub {
         }
 
         Log.d("Launch service");
-        // Context context = InstrumentationRegistry.getInstrumentation().getContext();
-        //startMonitorService(context);
     }
 
     private void startMonitorService(Context context) {
@@ -134,26 +133,26 @@ public class Stub {
         //stopMonitorService(context);
     }
 
-    private void stopMonitorService(Context context) {
-        Intent intent = new Intent("com.github.uiautomator.ACTION_STOP");
-        intent.setPackage("com.github.uiautomator");
-        context.startService(intent);
+    private boolean checkAccessibilityQuery() throws InterruptedException {
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        // check if app_process still alive
+        for (int i = 3; i > 0; i--) {
+            AccessibilityNodeInfo nodeInfo = instrumentation.getUiAutomation().getRootInActiveWindow();
+            if (nodeInfo != null) {
+                return true;
+            }
+            if (i > 1) Thread.sleep(1000);
+        }
+        return false;
     }
 
     @Test
     @LargeTest
     public void testUIAutomatorStub() throws InterruptedException {
+        // stop the server with "am force-stop com.github.uiautomator"
         Log.i("server started");
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        int nullCount = 0;
         while (server.isAlive()) {
-            AccessibilityNodeInfo nodeInfo = instrumentation.getUiAutomation().getRootInActiveWindow();
-            if (nodeInfo == null) {
-                nullCount += 1;
-            } else {
-                nullCount = 0;
-            }
-            if (nullCount >= 3) {
+            if (!checkAccessibilityQuery()) {
                 Log.e("uiAutomation.getRootInActiveWindow() always return null, okhttpd server quit");
                 return;
             }

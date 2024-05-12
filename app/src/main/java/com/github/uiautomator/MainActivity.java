@@ -5,18 +5,24 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+
 import com.android.permission.FloatWindowManager;
 import com.github.uiautomator.util.MemoryManager;
 import com.github.uiautomator.util.Permissons4App;
@@ -24,6 +30,7 @@ import com.github.uiautomator.util.Permissons4App;
 
 public class MainActivity extends Activity {
     private final String TAG = "ATXMainActivity";
+    private static final int REQUEST_IGNORE_BATTERY_OPTIMIZATIONS = 1001;
 
     private TextView tvInStorage;
     private TextView textViewIP;
@@ -71,6 +78,19 @@ public class MainActivity extends Activity {
                 Manifest.permission.READ_SMS,
                 Manifest.permission.RECEIVE_SMS};
         Permissons4App.initPermissions(this, permissions);
+
+        TextView viewVersion = (TextView) findViewById(R.id.app_version);
+        viewVersion.setText("version: " + getAppVersionName());
+    }
+
+    private String getAppVersionName() {
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -82,6 +102,45 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Permissons4App.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void requestIgnoreBatteryOptimizations(View view){
+        Intent intent = new Intent();
+        intent.setAction(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+        intent.setData(android.net.Uri.parse("package:" + getPackageName()));
+        startActivityForResult(intent, REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) {
+            // Check if the user granted the request or not
+            Log.d(TAG, "requestIgnoreBatteryOptimizations resultCode: " + resultCode);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (isIgnoringBatteryOptimizations()) {
+                    // User granted the request
+                    showToast("requestIgnoreBatteryOptimizations success");
+                } else {
+                    showToast("requestIgnoreBatteryOptimizations failure");
+                    // User didn't grant the request
+                }
+            }
+        }
+    }
+
+    @RequiresApi(api=Build.VERSION_CODES.M)
+    private boolean isIgnoringBatteryOptimizations() {
+        boolean isIgnoring = false;
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (powerManager != null) {
+            isIgnoring = powerManager.isIgnoringBatteryOptimizations(getPackageName());
+        }
+        return isIgnoring;
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     public void showFloatWindow(View view) {

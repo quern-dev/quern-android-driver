@@ -104,6 +104,27 @@
                 android:text="关闭悬浮窗" />
         </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            style="@style/SelectButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="requestIgnoreBatteryOptimizations"
+            android:text="忽略电池优化" />
+
+        <Button
+            style="@style/SelectButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Null" />
+    </LinearLayout>
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -147,6 +168,7 @@
             android:orientation="horizontal">
             <TextView
                 style="@style/LeftTitle"
+                android:id="@+id/app_version"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="version: todo"

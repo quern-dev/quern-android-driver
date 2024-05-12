@@ -36,6 +36,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import androidx.core.accessibilityservice.AccessibilityServiceInfoCompat;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -50,9 +52,6 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-
 
 import com.github.uiautomator.ToastHelper;
 import com.github.uiautomator.exceptions.NotImplementedException;
@@ -309,11 +308,6 @@ public class AutomatorServiceImpl implements AutomatorService {
         device.setCompressedLayoutHierarchy(compressed);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            try {
-                uiAutomation.clearCache();
-            } catch (NoSuchMethodError e) {
-                // ignore
-            }
             device.dumpWindowHierarchy(os);
             return os.toString("UTF-8");
         } catch (IOException e) {
