@@ -45,8 +45,13 @@ class AccessibilityNodeInfoDumper {
             serializer.attribute("", "rotation", Integer.toString(device.getDisplayRotation()));
 
             for (AccessibilityNodeInfo root : getWindowRoots(device)) {
-                dumpNodeRec(root, serializer, 0, device.getDisplayWidth(),
-                        device.getDisplayHeight());
+                try {
+                    dumpNodeRec(root, serializer, 0, device.getDisplayWidth(),
+                            device.getDisplayHeight());
+                } catch (IllegalArgumentException e) {
+                    // java.lang.IllegalArgumentException: Illegal character (U+0)
+                    e.printStackTrace();
+                }
             }
 
             serializer.endTag("", "hierarchy");
