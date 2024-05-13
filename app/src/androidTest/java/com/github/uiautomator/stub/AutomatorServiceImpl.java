@@ -308,7 +308,8 @@ public class AutomatorServiceImpl implements AutomatorService {
         device.setCompressedLayoutHierarchy(compressed);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            device.dumpWindowHierarchy(os);
+            AccessibilityNodeInfoDumper.dumpWindowHierarchy(device, os);
+            // device.dumpWindowHierarchy(os);
             return os.toString("UTF-8");
         } catch (IOException e) {
             Log.d("dumpWindowHierarchy got IOException: " + e);
