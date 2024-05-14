@@ -50,6 +50,16 @@ $ curl -X POST -d '{"jsonrpc": "2.0", "id": "1f0f2655716023254ed2b57ba4198815", 
  'naturalOrientation': True}
 ```
 
+# Resources
+- [Google UiAutomator Tutorial](https://developer.android.com/training/testing/ui-testing/uiautomator-testing?hl=zh-cn)
+- [Google UiAutomator API](https://developer.android.com/reference/kotlin/androidx/test/uiautomator/package-summary)
+- [Maven repository of uiautomator](https://mvnrepository.com/artifact/androidx.test.uiautomator/uiautomator)
+- [androidx.test.uiautomator release notes](https://developer.android.com/jetpack/androidx/releases/test-uiautomator)
+
+Clipboard, Thanks to @fplust
+
+- https://github.com/majido/clipper
+- https://github.com/appium/io.appium.settings/blob/5d3bc99ff35f3b816b4342395aba1bdea82ad48f/app/src/main/java/io/appium/settings/receivers/ClipboardReceiver.java
 
 # The buildin input method
 **Fast input method**
@@ -155,16 +165,6 @@ If you have any idea, please email codeskyblue@gmail.com or [submit tickets](htt
 # Added features
 
 - [x] support unicode input
-
-# Resources
-- [Google UiAutomator Tutorial](https://developer.android.com/training/testing/ui-testing/uiautomator-testing?hl=zh-cn)
-- [Google UiAutomator API](https://developer.android.com/reference/android/support/test/uiautomator/package-summary?hl=zh-cn)
-- [Maven repository of uiautomator-v18](https://mvnrepository.com/artifact/androidx.test.uiautomator/uiautomator-v18)
-
-Clipboard, Thanks to @fplust
-
-- https://github.com/majido/clipper
-- https://github.com/appium/io.appium.settings/blob/759d2febbc95a6832eb74fa0a4a56c5975dc694d/app/src/main/java/io/appium/settings/receivers/ClipboardReceiver.java#L30
 
 # Thanks to
 - [xiaocong](https://github.com/xiaocong)
