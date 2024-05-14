@@ -37,6 +37,7 @@ public class ConfiguratorInfo {
         this._scrollAcknowledgmentTimeout = config.getScrollAcknowledgmentTimeout();
         this._waitForIdleTimeout = config.getWaitForIdleTimeout();
         this._waitForSelectorTimeout = config.getWaitForSelectorTimeout();
+        this._uiAutomationFlags = config.getUiAutomationFlags();
     }
 
     public long getActionAcknowledgmentTimeout() {
@@ -79,6 +80,8 @@ public class ConfiguratorInfo {
         this._waitForSelectorTimeout = _waitForSelectorTimeout;
     }
 
+    public int getUiAutomationFlags() { return _uiAutomationFlags; }
+
     public static void setConfigurator(ConfiguratorInfo info) {
         Configurator config = Configurator.getInstance();
         config.setActionAcknowledgmentTimeout(info.getActionAcknowledgmentTimeout());
@@ -86,6 +89,7 @@ public class ConfiguratorInfo {
         config.setScrollAcknowledgmentTimeout(info.getScrollAcknowledgmentTimeout());
         config.setWaitForIdleTimeout(info.getWaitForIdleTimeout());
         config.setWaitForSelectorTimeout(info.getWaitForSelectorTimeout());
+        config.setUiAutomationFlags(info.getUiAutomationFlags());
     }
 
     private long _actionAcknowledgmentTimeout;
@@ -93,4 +97,5 @@ public class ConfiguratorInfo {
     private long _scrollAcknowledgmentTimeout;
     private long _waitForIdleTimeout;
     private long _waitForSelectorTimeout;
+    private int _uiAutomationFlags;
 }

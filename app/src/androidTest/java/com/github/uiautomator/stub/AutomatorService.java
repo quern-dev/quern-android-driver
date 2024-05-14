@@ -161,22 +161,21 @@ public interface AutomatorService {
     boolean injectInputEvent(int action, float x, float y, int metaState);
 
     /**
-     * Helper method used for debugging to dump the current window's layout hierarchy. The file root location is /data/local/tmp
-     *
-     * @param compressed use compressed layout hierarchy or not using setCompressedLayoutHeirarchy method. Ignore the parameter in case the API level lt 18.
-     * @param filename   the filename to be stored.
-     * @return the absolute path name of dumped file.
-     */
-    @Deprecated
-    String dumpWindowHierarchy(boolean compressed, String filename);
-
-    /**
      * Helper method used for debugging to dump the current window's layout hierarchy.
      *
      * @param compressed use compressed layout hierarchy or not using setCompressedLayoutHeirarchy method. Ignore the parameter in case the API level lt 18.
-     * @return the absolute path name of dumped file.
+     * @return xml content
      */
     String dumpWindowHierarchy(boolean compressed);
+
+    /**
+     * Helper method used for debugging to dump the current window's layout hierarchy
+     *
+     * @param compressed
+     * @param maxDepth
+     * @return xml content
+     */
+    String dumpWindowHierarchy(boolean compressed, int maxDepth);
 
     /**
      * Take a screenshot of current window and store it as PNG The screenshot is adjusted per screen rotation

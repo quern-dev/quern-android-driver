@@ -285,19 +285,6 @@ public class AutomatorServiceImpl implements AutomatorService {
     }
 
     /**
-     * Helper method used for debugging to dump the current window's layout hierarchy. The file root location is /data/local/tmp
-     *
-     * @param compressed use compressed layout hierarchy or not using setCompressedLayoutHeirarchy method. Ignore the parameter in case the API level lt 18.
-     * @param filename   the filename to be stored. @deprecated
-     * @return the absolute path name of dumped file.
-     */
-    @Deprecated
-    @Override
-    public String dumpWindowHierarchy(boolean compressed, String filename) {
-        return dumpWindowHierarchy(compressed);
-    }
-
-    /**
      * Helper method used for debugging to dump the current window's layout hierarchy.
      *
      * @param compressed use compressed layout hierarchy or not using setCompressedLayoutHeirarchy method. Ignore the parameter in case the API level lt 18.
@@ -305,10 +292,15 @@ public class AutomatorServiceImpl implements AutomatorService {
      */
     @Override
     public String dumpWindowHierarchy(boolean compressed) {
+        return dumpWindowHierarchy(compressed, 50);
+    }
+
+    @Override
+    public String dumpWindowHierarchy(boolean compressed, int maxDepth) {
         device.setCompressedLayoutHierarchy(compressed);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            AccessibilityNodeInfoDumper.dumpWindowHierarchy(device, os);
+            AccessibilityNodeInfoDumper.dumpWindowHierarchy(device, os, maxDepth);
             // device.dumpWindowHierarchy(os);
             return os.toString("UTF-8");
         } catch (IOException e) {

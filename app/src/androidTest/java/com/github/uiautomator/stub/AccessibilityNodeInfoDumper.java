@@ -34,7 +34,7 @@ class AccessibilityNodeInfoDumper {
 
     private AccessibilityNodeInfoDumper() { }
 
-    public static void dumpWindowHierarchy(UiDevice device, OutputStream out) throws IOException {
+    public static void dumpWindowHierarchy(UiDevice device, OutputStream out, int maxDepth) throws IOException {
         try (Section ignored = Traces.trace("AccessibilityNodeInfoDumper.dumpWindowHierarchy")) {
             XmlSerializer serializer = Xml.newSerializer();
             serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
@@ -45,13 +45,8 @@ class AccessibilityNodeInfoDumper {
             serializer.attribute("", "rotation", Integer.toString(device.getDisplayRotation()));
 
             for (AccessibilityNodeInfo root : getWindowRoots(device)) {
-                try {
-                    dumpNodeRec(root, serializer, 0, device.getDisplayWidth(),
-                            device.getDisplayHeight());
-                } catch (IllegalArgumentException e) {
-                    // java.lang.IllegalArgumentException: Illegal character (U+0)
-                    e.printStackTrace();
-                }
+                dumpNodeRec(root, serializer, 0, device.getDisplayWidth(),
+                            device.getDisplayHeight(), maxDepth);
             }
 
             serializer.endTag("", "hierarchy");
@@ -104,16 +99,22 @@ class AccessibilityNodeInfoDumper {
     }
 
     private static void dumpNodeRec(AccessibilityNodeInfo node, XmlSerializer serializer,int index,
-            int width, int height) throws IOException {
+            int width, int height, int maxDepth) throws IOException {
         serializer.startTag("", "node");
         if (!nafExcludedClass(node) && !nafCheck(node))
             serializer.attribute("", "NAF", Boolean.toString(true));
         serializer.attribute("", "index", Integer.toString(index));
-        serializer.attribute("", "text", safeCharSeqToString(node.getText()));
-        serializer.attribute("", "resource-id", safeCharSeqToString(node.getViewIdResourceName()));
-        serializer.attribute("", "class", safeCharSeqToString(node.getClassName()));
-        serializer.attribute("", "package", safeCharSeqToString(node.getPackageName()));
-        serializer.attribute("", "content-desc", safeCharSeqToString(node.getContentDescription()));
+        try {
+            serializer.attribute("", "text", safeCharSeqToString(node.getText()));
+            serializer.attribute("", "resource-id", safeCharSeqToString(node.getViewIdResourceName()));
+            serializer.attribute("", "class", safeCharSeqToString(node.getClassName()));
+            serializer.attribute("", "package", safeCharSeqToString(node.getPackageName()));
+            serializer.attribute("", "content-desc", safeCharSeqToString(node.getContentDescription()));
+        } catch (IllegalArgumentException e) {
+            // java.lang.IllegalArgumentException: Illegal character (U+0)
+            // TODO: maybe the best way is to update safeCharSeqToString
+            e.printStackTrace();
+        }
         serializer.attribute("", "checkable", Boolean.toString(node.isCheckable()));
         serializer.attribute("", "checked", Boolean.toString(node.isChecked()));
         serializer.attribute("", "clickable", Boolean.toString(node.isClickable()));
@@ -138,18 +139,20 @@ class AccessibilityNodeInfoDumper {
             serializer.attribute("", "display-id",
                     Integer.toString(Api30Impl.getDisplayId(node)));
         }
-        int count = node.getChildCount();
-        for (int i = 0; i < count; i++) {
-            AccessibilityNodeInfo child = node.getChild(i);
-            if (child != null) {
-                if (child.isVisibleToUser()) {
-                    dumpNodeRec(child, serializer, i, width, height);
-                    child.recycle();
+        if (maxDepth > 0) {
+            int count = node.getChildCount();
+            for (int i = 0; i < count; i++) {
+                AccessibilityNodeInfo child = node.getChild(i);
+                if (child != null) {
+                    if (child.isVisibleToUser()) {
+                        dumpNodeRec(child, serializer, i, width, height, maxDepth-1);
+                        child.recycle();
+                    } else {
+                        Log.i(TAG, String.format("Skipping invisible child: %s", child));
+                    }
                 } else {
-                    Log.i(TAG, String.format("Skipping invisible child: %s", child));
+                    Log.i(TAG, String.format("Null child %d/%d, parent: %s", i, count, node));
                 }
-            } else {
-                Log.i(TAG, String.format("Null child %d/%d, parent: %s", i, count, node));
             }
         }
         serializer.endTag("", "node");
