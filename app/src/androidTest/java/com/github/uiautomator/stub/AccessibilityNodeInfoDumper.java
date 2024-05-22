@@ -1,5 +1,6 @@
 package com.github.uiautomator.stub;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.UiAutomation;
 import android.os.Build;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityWindowInfo;
 
 import androidx.annotation.RequiresApi;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.util.Traces;
@@ -81,7 +83,7 @@ class AccessibilityNodeInfoDumper {
         return roots.toArray(new AccessibilityNodeInfo[0]);
     }
 
-    @RequiresApi(21)
+    @SdkSuppress(minSdkVersion = 21)
     private static List<AccessibilityWindowInfo> getWindows(UiAutomation uiAutomation) {
         // Support multi-display searches for API level 30 and up.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

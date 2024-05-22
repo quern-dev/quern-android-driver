@@ -23,7 +23,6 @@
 
 package com.github.uiautomator.stub;
 
-import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Instrumentation;
 import android.app.UiAutomation;
 import android.content.ClipData;
@@ -39,7 +38,6 @@ import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import androidx.core.accessibilityservice.AccessibilityServiceInfoCompat;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.Direction;
@@ -85,17 +83,23 @@ public class AutomatorServiceImpl implements AutomatorService {
     ClipboardManager clipboard;
 
     public AutomatorServiceImpl() {
-        mInstrumentation = InstrumentationRegistry.getInstrumentation();
-        uiAutomation = mInstrumentation.getUiAutomation();
-
+        // Reset Configurator Wait Timeout
+        Configurator configurator = Configurator.getInstance();
+        configurator.setWaitForSelectorTimeout(0L); // Default 10000
+        configurator.setWaitForIdleTimeout(0L); // Default 10000
+        configurator.setActionAcknowledgmentTimeout(500); // Default 3000
+        configurator.setScrollAcknowledgmentTimeout(200); // Default 200
+        configurator.setKeyInjectionDelay(0); // Default 0
         // https://developer.android.com/reference/androidx/core/accessibilityservice/AccessibilityServiceInfoCompat#FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY()
         // https://www.jianshu.com/p/a8ccd607e172
         // https://developer.android.com/reference/android/app/UiAutomation
+        // The problem is after set flags |= 8, the service always crash.
+        // configurator.setUiAutomationFlags(configurator.getUiAutomationFlags() | AccessibilityServiceInfoCompat.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY);
 
-        AccessibilityServiceInfo info = uiAutomation.getServiceInfo();
-        // improve accessibility support for "android.webkit.WebView" q
-        info.flags |= AccessibilityServiceInfoCompat.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY;
-        uiAutomation.setServiceInfo(info);
+        mInstrumentation = InstrumentationRegistry.getInstrumentation();
+        uiAutomation = mInstrumentation.getUiAutomation();
+
+        //uiAutomation.setOnAccessibilityEventListener(new AccessibilityEventListener(device, watchers));
 
         device = UiDevice.getInstance(mInstrumentation);
         touchController = new TouchController(mInstrumentation);
@@ -113,16 +117,6 @@ public class AutomatorServiceImpl implements AutomatorService {
                 soundPool.play(sampleId, 1, 1, 1, 0, 1);
             }
         });
-
-        // Reset Configurator Wait Timeout
-        Configurator configurator = Configurator.getInstance();
-        configurator.setWaitForSelectorTimeout(0L); // Default 10000
-        configurator.setWaitForIdleTimeout(0L); // Default 10000
-        configurator.setActionAcknowledgmentTimeout(500); // Default 3000
-        configurator.setScrollAcknowledgmentTimeout(200); // Default 200
-        configurator.setKeyInjectionDelay(0); // Default 0
-
-        //uiAutomation.setOnAccessibilityEventListener(new AccessibilityEventListener(device, watchers));
     }
 
     private UiAutomation getUiAutomation() {

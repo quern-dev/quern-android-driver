@@ -82,6 +82,10 @@ public class ConfiguratorInfo {
 
     public int getUiAutomationFlags() { return _uiAutomationFlags; }
 
+    public void setUiAutomationFlags(int _uiAutomationFlags) {
+        this._uiAutomationFlags = _uiAutomationFlags;
+    }
+
     public static void setConfigurator(ConfiguratorInfo info) {
         Configurator config = Configurator.getInstance();
         config.setActionAcknowledgmentTimeout(info.getActionAcknowledgmentTimeout());
