@@ -91,9 +91,9 @@
         </service>
 
         <service
-            android:name=".FastInputIME"
+            android:name=".AdbKeyboard"
             android:exported="true"
-            android:label="@string/fast_input_label"
+            android:label="@string/adb_keyboard_label"
             android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
                 <action android:name="android.view.InputMethod" />

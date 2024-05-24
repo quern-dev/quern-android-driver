@@ -62,7 +62,7 @@ Clipboard, Thanks to @fplust
 - https://github.com/appium/io.appium.settings/blob/5d3bc99ff35f3b816b4342395aba1bdea82ad48f/app/src/main/java/io/appium/settings/receivers/ClipboardReceiver.java
 
 # The buildin input method
-**Fast input method**
+**com.github.uiautomator/.AdbKeyboard**
 
 Encode the text into UTF-8 and then Base64
 
@@ -70,33 +70,59 @@ For example:
 
     "Hello 你好" -> (UTF-8 && Base64) = SGVsbG8g5L2g5aW9
 
-Send to FastInputIME with broadcast
+Send to AdbKeyboard with broadcast
 
+> Broadcast completed: result=-1 means success
 ```bash
+# show ime list
+$ adb shell ime list -s -a
+com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME
+com.google.android.tts/com.google.android.apps.speech.tts.googletts.settings.asr.voiceime.VoiceInputMethodService
+com.github.uiautomator/.AdbKeyboard
+
+# enable and set ime
+$ adb shell ime enable com.github.uiautomator/.AdbKeyboard
+$ adb shell settings put secure default_input_method com.github.uiautomator/.AdbKeyboard
+
 # Append text to input field
-$ adb shell am broadcast -a ADB_INPUT_TEXT --es text SGVsbG8g5L2g5aW9
+$ adb shell am broadcast -a ADB_KEYBOARD_INPUT_TEXT --es text SGVsbG8g5L2g5aW9
+Broadcasting: Intent { act=ADB_KEYBOARD_INPUT_TEXT flg=0x400000 (has extras) }
+Broadcast completed: result=-1
 
 # Clear text
-$ adb shell am broadcast -a ADB_CLEAR_TEXT
+$ adb shell am broadcast -a ADB_KEYBOARD_CLEAR_TEXT
+Broadcasting: Intent { act=ADB_KEYBOARD_CLEAR_TEXT flg=0x400000 }
+Broadcast completed: result=-1
 
 # Clear text before append text
-$ adb shell am broadcast -a ADB_SET_TEXT --es text SGVsbG8g5L2g5aW9
+$ adb shell am broadcast -a ADB_KEYBOARD_SET_TEXT --es text SGVsbG8g5L2g5aW9
+Broadcasting: Intent { act=ADB_KEYBOARD_SET_TEXT flg=0x400000 (has extras) }
+Broadcast completed: result=-1
+
+# Send Keycode or Editor code according to the InputEditor requires
+$ adb shell am broadcast -a ADB_KEYBOARD_SMART_ENTER
+Broadcasting: Intent { act=ADB_KEYBOARD_SMART_ENTER flg=0x400000 }
+Broadcast completed: result=-1
 
 # Send keycode, eg: ENTER
-$ adb shell am broadcast -a ADB_INPUT_KEYCODE --ei code 66
-
-# Send Editor code
-$ adb shell am broadcast -a ADB_EDITOR_CODE --ei code 2 # IME_ACTION_GO
+$ adb shell am broadcast -a ADB_KEYBOARD_INPUT_KEYCODE --ei code 66
+# Send Editor code, eg: 2
+$ adb shell am broadcast -a ADB_KEYBOARD_EDITOR_CODE --ei code 2 # IME_ACTION_GO
 
 # Get clipboard (without data)
-$ adb shell am broadcast -a ADB_GET_CLIPBOARD
+$ adb shell am broadcast -a ADB_KEYBOARD_GET_CLIPBOARD
 Broadcasting: Intent { act=ADB_GET_CLIPBOARD flg=0x400000 }
 Broadcast completed: result=0
 
 # Get clipboard (with data, base64 encoded)
-$ adb shell am broadcast -a ADB_GET_CLIPBOARD
+$ adb shell am broadcast -a ADB_GET_KEYBOARD_CLIPBOARD
 Broadcasting: Intent { act=ADB_GET_CLIPBOARD flg=0x400000 }
 Broadcast completed: result=-1, data="5LqG6Kej5Lyg57uf5paH5YyW"
+
+# show keyboard
+$ adb shell am broadcast -a ADB_KEYBOARD_HIDE
+# hide keyboard
+$ adb shell am broadcast -a ADB_KEYBOARD_SHOW
 ```
 
 - [Editor Code](https://developer.android.com/reference/android/view/inputmethod/EditorInfo)
