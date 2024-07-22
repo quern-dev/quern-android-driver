@@ -120,9 +120,9 @@ Broadcasting: Intent { act=ADB_GET_CLIPBOARD flg=0x400000 }
 Broadcast completed: result=-1, data="5LqG6Kej5Lyg57uf5paH5YyW"
 
 # show keyboard
-$ adb shell am broadcast -a ADB_KEYBOARD_HIDE
-# hide keyboard
 $ adb shell am broadcast -a ADB_KEYBOARD_SHOW
+# hide keyboard
+$ adb shell am broadcast -a ADB_KEYBOARD_HIDE
 ```
 
 - [Editor Code](https://developer.android.com/reference/android/view/inputmethod/EditorInfo)
