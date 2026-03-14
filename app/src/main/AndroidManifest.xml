@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-        <!-- AdbKeyboard IME — the reason this APK exists -->
+        <!-- AdbKeyboard IME for Unicode text input -->
         <service
             android:name=".AdbKeyboard"
             android:exported="true"
@@ -27,8 +27,18 @@
                 android:resource="@xml/method" />
         </service>
 
+        <!-- Locale change receiver for system language switching -->
+        <receiver
+            android:name=".LocaleReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.github.uiautomator.SET_LOCALE" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
 </manifest>
