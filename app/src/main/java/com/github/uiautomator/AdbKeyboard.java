@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -64,7 +65,11 @@ public class AdbKeyboard extends InputMethodService {
                 filter.addAction(ka.toString());
             }
             mReceiver = new InputMessageReceiver();
-            registerReceiver(mReceiver, filter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                registerReceiver(mReceiver, filter, Context.RECEIVER_EXPORTED);
+            } else {
+                registerReceiver(mReceiver, filter);
+            }
         }
     }
 
